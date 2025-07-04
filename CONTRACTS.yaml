@@ -236,7 +236,7 @@ components:
         - name
         - surname
         - phone_number
-        - password
+        - hashed_password
       properties:
         name:
           type: string
