@@ -248,7 +248,7 @@ components:
           type: string
         email:
           type: string
-        password:
+        hashed_password:
           type: string
         is_admin:
           type: boolean
