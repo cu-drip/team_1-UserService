@@ -58,8 +58,9 @@ paths:
                 $ref: '#/components/schemas/User'
         '404':
           description: Пользователь не найден
+
     patch:
-      summary: Обновить профиль пользователя
+      summary: Частично обновить профиль пользователя
       tags: [User Management]
       parameters:
         - $ref: '#/components/parameters/UserId'
@@ -71,11 +72,39 @@ paths:
               $ref: '#/components/schemas/UserUpdateRequest'
       responses:
         '200':
-          description: Профиль обновлён
+          description: Профиль частично обновлён
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+
+    put:
+      summary: Полностью обновить профиль пользователя
+      tags: [User Management]
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+      responses:
+        '200':
+          description: Профиль полностью обновлён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+    delete:
+      summary: Удалить пользователя
+      tags: [User Management]
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '204':
+          description: Пользователь удалён, контента нет
 
   /users/{id}/mmr:
     get:
@@ -123,7 +152,7 @@ components:
       in: header
       name: X-User-UUID
       description: >
-        RFC‑4122 UUID пользователя. Пример: 123e4567-e89b-12d3-a456-426614174000
+        RFC-4122 UUID пользователя. Пример: 123e4567-e89b-12d3-a456-426614174000
       x-example: 123e4567-e89b-12d3-a456-426614174000
       x-pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
       x-minLength: 36
@@ -133,7 +162,7 @@ components:
       in: header
       name: X-User-Hash
       description: >
-        bcrypt‑hash (cost=10) от пароля + соль. Пример сокращён.
+        bcrypt-hash (cost=10) от пароля + соль. Пример сокращён.
       x-example: "$2b$10$7qGwYnbDOMqSdWwaZ7kz1Oppz92O1dW8r8hUWNu4DwSUjWBo9.TX2"
       x-minLength: 32
       x-maxLength: 128
@@ -207,7 +236,7 @@ components:
         - name
         - surname
         - phone_number
-        - hashed_password
+        - password
       properties:
         name:
           type: string
@@ -219,7 +248,7 @@ components:
           type: string
         email:
           type: string
-        hashed_password:
+        password:
           type: string
         is_admin:
           type: boolean
