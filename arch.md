@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/65240fb9-8298-4c4b-97bf-df82d8816db8)
+![image](https://github.com/user-attachments/assets/cb69ddb2-1a5a-4ff9-bfd4-87bd4569f9d7)
 
 flowchart TB
   %% Верхний уровень: UI
