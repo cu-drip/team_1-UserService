@@ -1,5 +1,3 @@
-![image](https://github.com/user-attachments/assets/cb69ddb2-1a5a-4ff9-bfd4-87bd4569f9d7)
-
 flowchart TB
   %% Верхний уровень: UI
   subgraph UI ["UI"]
@@ -69,3 +67,4 @@ flowchart TB
   class UserService,CompetitionService,StatisticsService,ChatService,FeedBackService core
   class CompetitionEngine engine
   class DB database
+![Screenshot 2025-07-05 210657](https://github.com/user-attachments/assets/8a61a337-a675-48db-9b65-d2037e59ed9a)
