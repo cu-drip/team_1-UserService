@@ -123,7 +123,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         '500':
           $ref: '#/components/responses/InternalError'
-  /auth/register:
+  /api/v1/auth/register:
     post:
       summary: Регистрация пользователя
       tags: [Auth]
@@ -146,7 +146,7 @@ paths:
           $ref: '#/components/responses/ConflictError'
         '500':
           $ref: '#/components/responses/InternalError'
-  /auth/login:
+  /api/v1/auth/login:
     post:
       summary: Вход пользователя
       tags: [Auth]
@@ -169,7 +169,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         '500':
           $ref: '#/components/responses/InternalError'
-  /auth/me:
+  /api/v1/auth/me:
     get:
       summary: Получить свой профиль
       tags: [Auth]
@@ -208,6 +208,67 @@ paths:
           $ref: '#/components/responses/BadRequestError'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /api/v1/auth/change-password:
+    patch:
+      summary: Сменить пароль (авторизованный пользователь)
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+      responses:
+        '200':
+          description: Пароль успешно изменён
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /api/v1/auth/password-reset-request:
+    post:
+      summary: Запрос на сброс пароля (забыли пароль)
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Письмо для сброса пароля отправлено (или всегда 200 для безопасности)
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /api/v1/auth/password-reset:
+    post:
+      summary: Сброс пароля по токену (забыли пароль)
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                newPassword:
+                  type: string
+      responses:
+        '200':
+          description: Пароль успешно сброшен
+        '400':
+          $ref: '#/components/responses/BadRequestError'
         '500':
           $ref: '#/components/responses/InternalError'
 components:
@@ -285,8 +346,6 @@ components:
         phoneNumber:
           type: string
         email:
-          type: string
-        hashedPassword:
           type: string
         isAdmin:
           type: boolean
@@ -401,8 +460,6 @@ components:
           type: string
         email:
           type: string
-        hashedPassword:
-          type: string
         isAdmin:
           type: boolean
         dateOfBirth:
@@ -447,3 +504,10 @@ components:
         - PARTICIPANT
         - ORGANIZER
         - ADMIN 
+    ChangePasswordRequest:
+      type: object
+      properties:
+        oldPassword:
+          type: string
+        newPassword:
+          type: string 
