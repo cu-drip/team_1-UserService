@@ -52,6 +52,6 @@ public class AuthService {
             throw new RuntimeException("Invalid password");
         }
         // Генерируем JWT-токен
-        return jwtTokenProvider.generateToken(user.getId(), user.getEmail());
+        return jwtTokenProvider.generateToken(user.getId(), user.isAdmin());
     }
 } 
