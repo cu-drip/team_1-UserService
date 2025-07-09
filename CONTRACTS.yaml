@@ -1,0 +1,325 @@
+openapi: 3.0.4
+info:
+  title: UserService API
+  version: 1.0.0
+  description: API для управления пользователями, их профилями и спортивными рейтингами
+
+servers:
+  - url: https://api.user.local
+    description: Local Dev Server
+
+security:
+  - UserIdHeader: []
+    UserPwdHashHeader: []
+
+paths:
+  /users:
+    get:
+      summary: Получить список пользователей
+      tags: [User Management]
+      responses:
+        '200':
+          description: Список пользователей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      summary: Создать пользователя
+      tags: [User Management]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+      responses:
+        '201':
+          description: Пользователь создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/{id}:
+    get:
+      summary: Получить пользователя по ID
+      tags: [User Management]
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: Пользователь найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Пользователь не найден
+
+    patch:
+      summary: Частично обновить профиль пользователя
+      tags: [User Management]
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+      responses:
+        '200':
+          description: Профиль частично обновлён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+    put:
+      summary: Полностью обновить профиль пользователя
+      tags: [User Management]
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+      responses:
+        '200':
+          description: Профиль полностью обновлён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+    delete:
+      summary: Удалить пользователя
+      tags: [User Management]
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '204':
+          description: Пользователь удалён, контента нет
+
+  /users/{id}/mmr:
+    get:
+      summary: Получить MMR пользователя по видам спорта
+      tags: [User MMR]
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: MMR по видам спорта
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserSportMmr'
+
+  /users/{id}/avatar:
+    patch:
+      summary: Обновить аватар пользователя
+      tags: [User Management]
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                avatar_url:
+                  type: string
+      responses:
+        '200':
+          description: Аватар обновлён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+components:
+  securitySchemes:
+    UserIdHeader:
+      type: apiKey
+      in: header
+      name: X-User-UUID
+      description: >
+        RFC-4122 UUID пользователя. Пример: 123e4567-e89b-12d3-a456-426614174000
+      x-example: 123e4567-e89b-12d3-a456-426614174000
+      x-pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+      x-minLength: 36
+
+    UserPwdHashHeader:
+      type: apiKey
+      in: header
+      name: X-User-Hash
+      description: >
+        bcrypt-hash (cost=10) от пароля + соль. Пример сокращён.
+      x-example: "$2b$10$7qGwYnbDOMqSdWwaZ7kz1Oppz92O1dW8r8hUWNu4DwSUjWBo9.TX2"
+      x-minLength: 32
+      x-maxLength: 128
+
+  parameters:
+    UserId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Идентификатор пользователя
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        surname:
+          type: string
+        patronymic:
+          type: string
+          nullable: true
+        phone_number:
+          type: string
+        email:
+          type: string
+          format: email
+          nullable: true
+        hashed_password:
+          type: string
+        is_admin:
+          type: boolean
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+        age:
+          type: integer
+          nullable: true
+        sex:
+          type: string
+          enum: [ male, female, other ]
+          nullable: true
+        weight:
+          type: number
+          format: float
+          nullable: true
+        height:
+          type: number
+          format: float
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        bio:
+          type: string
+          nullable: true
+        avatar_url:
+          type: string
+          nullable: true
+
+    UserCreateRequest:
+      type: object
+      required:
+        - name
+        - surname
+        - phone_number
+        - hashed_password
+      properties:
+        name:
+          type: string
+        surname:
+          type: string
+        patronymic:
+          type: string
+        phone_number:
+          type: string
+        email:
+          type: string
+        hashed_password:
+          type: string
+        is_admin:
+          type: boolean
+        date_of_birth:
+          type: string
+          format: date
+        age:
+          type: integer
+        sex:
+          type: string
+          enum: [ male, female, other ]
+        weight:
+          type: number
+          format: float
+        height:
+          type: number
+          format: float
+        bio:
+          type: string
+        avatar_url:
+          type: string
+
+    UserUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        surname:
+          type: string
+        patronymic:
+          type: string
+        phone_number:
+          type: string
+        email:
+          type: string
+        date_of_birth:
+          type: string
+          format: date
+        age:
+          type: integer
+        sex:
+          type: string
+          enum: [ male, female, other ]
+        weight:
+          type: number
+          format: float
+        height:
+          type: number
+          format: float
+        bio:
+          type: string
+        avatar_url:
+          type: string
+
+    UserSportMmr:
+      type: object
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        sport:
+          type: string
+          enum: [ football, boxing, basketball, chess, tennis, jiu_jitsu ]
+        mmr:
+          type: number
+          format: double
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: integer
