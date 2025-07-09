@@ -1,52 +1,41 @@
-version: "3.9"
-
 secrets:
   jwt_secret:
     file: ./secrets/jwt_secret.key
 
 services:
-  competitiondb:
+  userdb:
     image: postgres:16-alpine
-    container_name: competition-postgres
+    container_name: user-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: competition
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: users
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
     ports:
-      - "5399:5432"
+      - "5433:5432"
     volumes:
-      - competition_data:/var/lib/postgresql/data
-      - ./init-scripts/competition:/docker-entrypoint-initdb.d
-    networks:
-      - sports-network
+      - user_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d competition"]
+      test: ["CMD-SHELL", "pg_isready -U myuser -d users"]
       interval: 10s
       retries: 5
-  
-  competition-service:
-    build: ./competition
-    container_name: competition-service
+
+  user-service:
+    build: .
+    container_name: user-service
     restart: on-failure
     depends_on:
-      competitiondb:
+      userdb:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL:      jdbc:postgresql://competitiondb:5432/competition
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
-      JWT_SECRET_PATH:            /run/secrets/jwt_secret
+      SPRING_DATASOURCE_URL: jdbc:postgresql://userdb:5432/users
+      SPRING_DATASOURCE_USERNAME: myuser
+      SPRING_DATASOURCE_PASSWORD: mypassword
+      JWT_SECRET_PATH: /run/secrets/jwt_secret
     ports:
       - "8080:8080"
-    networks:
-      - sports-network
     secrets:
       - jwt_secret
 
 volumes:
-  competition_data:
-
-networks:
-  sports-network:
-    driver: bridge
+  user_data:
