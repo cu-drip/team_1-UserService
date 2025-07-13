@@ -36,8 +36,9 @@ public class AuthService {
                 .hashedPassword(passwordHash)
                 .name(request.getName())
                 .surname(request.getSurname())
+                .patronymic(request.getPatronymic())
                 .phoneNumber(request.getPhoneNumber())
-                .isAdmin(false)
+                .isAdmin(true)
                 .createdAt(LocalDateTime.now())
                 .build();
         userRepository.save(user);
@@ -51,7 +52,13 @@ public class AuthService {
         if (!passwordEncoder.matches(password, user.getHashedPassword())) {
             throw new RuntimeException("Invalid password");
         }
-        // Генерируем JWT-токен
-        return jwtTokenProvider.generateToken(user.getId(), user.isAdmin());
+        // Генерируем JWT-токен с ролями
+        java.util.List<String> roles = new java.util.ArrayList<>();
+        if (user.isAdmin()) {
+            roles.add("ADMIN");
+        } else {
+            roles.add("USER");
+        }
+        return jwtTokenProvider.generateToken(user.getId(), user.getEmail(), roles);
     }
 } 

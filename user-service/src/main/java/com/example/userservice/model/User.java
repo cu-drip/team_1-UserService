@@ -20,9 +20,9 @@ public class User {
     private String name;
     private String surname;
     private String patronymic;
-    private String phoneNumber;
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String email;
+    @Column(name = "hashedPassword")
     private String hashedPassword;
     private boolean isAdmin;
     @Column(nullable = true)
@@ -41,4 +41,8 @@ public class User {
     private String bio;
     @Column(nullable = true)
     private String avatarUrl;
+    @Column(nullable = true)
+    private String phoneNumber;
+    @Column(nullable = true)
+    private Integer mmr;
 } 

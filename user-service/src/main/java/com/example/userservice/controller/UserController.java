@@ -4,7 +4,7 @@ import com.example.userservice.dto.UserCreateRequest;
 import com.example.userservice.dto.UserUpdateRequest;
 import com.example.userservice.model.User;
 import com.example.userservice.repository.UserRepository;
-import com.example.userservice.security.JwtTokenProvider;
+import com.example.userservice.dto.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,12 +29,10 @@ import java.util.UUID;
 @Tag(name = "User API", description = "Операции с пользователями")
 public class UserController {
     private final UserRepository userRepository;
-    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public UserController(UserRepository userRepository, JwtTokenProvider jwtTokenProvider) {
+    public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @GetMapping(path = {"", "/"})
@@ -47,8 +45,8 @@ public class UserController {
     @PostMapping(path = {"", "/"})
     @Operation(summary = "Создать пользователя", description = "Создаёт нового пользователя.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Пользователь создан", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
-            @ApiResponse(responseCode = "400", description = "Некорректные данные", content = @Content)
+        @ApiResponse(responseCode = "201", description = "Пользователь создан", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+        @ApiResponse(responseCode = "400", description = "Некорректные данные", content = @Content)
     })
     public ResponseEntity<User> createUser(@Valid @RequestBody UserCreateRequest request) {
         if (userRepository.findAll().stream().anyMatch(u -> u.getEmail().equals(request.getEmail()))) {
@@ -75,44 +73,26 @@ public class UserController {
         return ResponseEntity.status(201).body(user);
     }
 
-    @GetMapping("/me")
-    @Operation(summary = "Получить пользователя по JWT токену", description = "Возвращает пользователя, соответствующего переданному JWT токену.")
+    @GetMapping("/{id}")
+    @Operation(summary = "Получить пользователя по ID", description = "Возвращает пользователя по его идентификатору.")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Пользователь найден", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
-        @ApiResponse(responseCode = "401", description = "Невалидный или отсутствует токен", content = @Content),
+        @ApiResponse(responseCode = "200", description = "Пользователь найден", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))),
         @ApiResponse(responseCode = "404", description = "Пользователь не найден", content = @Content)
     })
-    public ResponseEntity<User> getUserByToken(@RequestHeader("Authorization") String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Отсутствует или некорректный Authorization header");
-        }
-        String token = authHeader.substring(7);
-        if (!jwtTokenProvider.validateToken(token)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Невалидный JWT токен");
-        }
-        UUID userId = jwtTokenProvider.getUserIdFromToken(token);
-        return userRepository.findById(userId)
-                .map(ResponseEntity::ok)
+    public ResponseEntity<UserResponse> getUserById(@PathVariable java.util.UUID id) {
+        return userRepository.findById(id)
+                .map(user -> ResponseEntity.ok(com.example.userservice.dto.UserResponse.from(user)))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
     }
 
-    @PatchMapping("/me")
-    @Operation(summary = "Обновить пользователя по JWT токену", description = "Обновляет данные пользователя, соответствующего JWT токену.")
+    @PatchMapping("/{id}")
+    @Operation(summary = "Обновить пользователя", description = "Обновляет данные пользователя по его идентификатору.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Пользователь обновлён", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
-        @ApiResponse(responseCode = "401", description = "Невалидный или отсутствует токен", content = @Content),
         @ApiResponse(responseCode = "404", description = "Пользователь не найден", content = @Content)
     })
-    public ResponseEntity<User> updateUserByToken(@RequestHeader("Authorization") String authHeader, @Valid @RequestBody UserUpdateRequest request) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Отсутствует или некорректный Authorization header");
-        }
-        String token = authHeader.substring(7);
-        if (!jwtTokenProvider.validateToken(token)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Невалидный JWT токен");
-        }
-        UUID userId = jwtTokenProvider.getUserIdFromToken(token);
-        return userRepository.findById(userId).map(user -> {
+    public ResponseEntity<User> updateUser(@PathVariable java.util.UUID id, @Valid @RequestBody UserUpdateRequest request) {
+        return userRepository.findById(id).map(user -> {
             if (request.getName() != null) user.setName(request.getName());
             if (request.getSurname() != null) user.setSurname(request.getSurname());
             if (request.getPatronymic() != null) user.setPatronymic(request.getPatronymic());
@@ -131,26 +111,17 @@ public class UserController {
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
     }
 
-    @DeleteMapping("/me")
-    @Operation(summary = "Удалить пользователя по JWT токену", description = "Удаляет пользователя, соответствующего JWT токену.")
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Удалить пользователя", description = "Удаляет пользователя по его идентификатору.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Пользователь удалён"),
-        @ApiResponse(responseCode = "401", description = "Невалидный или отсутствует токен", content = @Content),
-        @ApiResponse(responseCode = "404", description = "Пользователь не найден", content = @Content)
+        @ApiResponse(responseCode = "404", description = "Пользователь не найден")
     })
-    public ResponseEntity<Void> deleteUserByToken(@RequestHeader("Authorization") String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Отсутствует или некорректный Authorization header");
-        }
-        String token = authHeader.substring(7);
-        if (!jwtTokenProvider.validateToken(token)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Невалидный JWT токен");
-        }
-        UUID userId = jwtTokenProvider.getUserIdFromToken(token);
-        if (!userRepository.existsById(userId)) {
+    public ResponseEntity<Void> deleteUser(@PathVariable java.util.UUID id) {
+        if (!userRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден");
         }
-        userRepository.deleteById(userId);
+        userRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
-}
+} 

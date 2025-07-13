@@ -1,43 +1,43 @@
 {
   "info": {
-    "name": "User Service API v1",
-    "_postman_id": "user-service-api-v1",
-    "description": "Коллекция для проверки всех эндпоинтов User Service",
+    "name": "User Service API v1 (Clean)",
+    "_postman_id": "user-service-api-v1-clean",
+    "description": "Коллекция для проверки всех эндпоинтов User Service (валидные данные)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "Регистрация пользователя",
+      "name": "Регистрация пользователя: Иван Иванов",
       "request": {
         "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"testpassword\",\n  \"name\": \"Test\",\n  \"surname\": \"User\",\n  \"phoneNumber\": \"1234567890\"\n}"
+          "raw": "{\n  \"email\": \"ivan.ivanov2024@example.com\",\n  \"password\": \"Ivan2024!pass\",\n  \"name\": \"Иван\",\n  \"surname\": \"Иванов\",\n  \"phoneNumber\": \"79001234567\"\n}"
         },
         "url": {
-          "raw": "http://localhost:8080/api/v1/auth/register",
+          "raw": "http://localhost:8081/api/v1/auth/register",
           "protocol": "http",
           "host": ["localhost"],
-          "port": "8080",
+          "port": "8081",
           "path": ["api", "v1", "auth", "register"]
         }
       }
     },
     {
-      "name": "Логин (получить JWT-токен)",
+      "name": "Логин (Иван Иванов)",
       "request": {
         "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"testpassword\"\n}"
+          "raw": "{\n  \"email\": \"ivan.ivanov2024@example.com\",\n  \"password\": \"Ivan2024!pass\"\n}"
         },
         "url": {
-          "raw": "http://localhost:8080/api/v1/auth/login",
+          "raw": "http://localhost:8081/api/v1/auth/login",
           "protocol": "http",
           "host": ["localhost"],
-          "port": "8080",
+          "port": "8081",
           "path": ["api", "v1", "auth", "login"]
         }
       }
@@ -54,16 +54,16 @@
           }
         ],
         "url": {
-          "raw": "http://localhost:8080/api/v1/auth/me",
+          "raw": "http://localhost:8081/api/v1/auth/me",
           "protocol": "http",
           "host": ["localhost"],
-          "port": "8080",
+          "port": "8081",
           "path": ["api", "v1", "auth", "me"]
         }
       }
     },
     {
-      "name": "Обновить свой профиль",
+      "name": "Обновить свой профиль (имя)",
       "request": {
         "method": "PATCH",
         "header": [
@@ -75,13 +75,13 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"name\": \"NewName\"\n}"
+          "raw": "{\n  \"name\": \"Иван-Обновленный\"\n}"
         },
         "url": {
-          "raw": "http://localhost:8080/api/v1/auth/me",
+          "raw": "http://localhost:8081/api/v1/auth/me",
           "protocol": "http",
           "host": ["localhost"],
-          "port": "8080",
+          "port": "8081",
           "path": ["api", "v1", "auth", "me"]
         }
       }
@@ -99,13 +99,13 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"oldPassword\": \"testpassword\",\n  \"newPassword\": \"newpassword\"\n}"
+          "raw": "{\n  \"oldPassword\": \"Ivan2024!pass\",\n  \"newPassword\": \"Ivan2024!newpass\"\n}"
         },
         "url": {
-          "raw": "http://localhost:8080/api/v1/auth/change-password",
+          "raw": "http://localhost:8081/api/v1/auth/change-password",
           "protocol": "http",
           "host": ["localhost"],
-          "port": "8080",
+          "port": "8081",
           "path": ["api", "v1", "auth", "change-password"]
         }
       }
@@ -122,10 +122,10 @@
           }
         ],
         "url": {
-          "raw": "http://localhost:8080/api/v1/users",
+          "raw": "http://localhost:8081/api/v1/users",
           "protocol": "http",
           "host": ["localhost"],
-          "port": "8080",
+          "port": "8081",
           "path": ["api", "v1", "users"]
         }
       }
@@ -143,13 +143,13 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"name\": \"User2\",\n  \"surname\": \"Second\",\n  \"email\": \"user2@example.com\",\n  \"hashedPassword\": \"password2\",\n  \"isAdmin\": false\n}"
+          "raw": "{\n  \"name\": \"Мария\",\n  \"surname\": \"Смирнова\",\n  \"email\": \"maria.smirnova2024@example.com\",\n  \"hashedPassword\": \"Maria2024#pass\",\n  \"isAdmin\": false\n}"
         },
         "url": {
-          "raw": "http://localhost:8080/api/v1/users",
+          "raw": "http://localhost:8081/api/v1/users",
           "protocol": "http",
           "host": ["localhost"],
-          "port": "8080",
+          "port": "8081",
           "path": ["api", "v1", "users"]
         }
       }
@@ -166,10 +166,10 @@
           }
         ],
         "url": {
-          "raw": "http://localhost:8080/api/v1/users/{{user_id}}",
+          "raw": "http://localhost:8081/api/v1/users/{{user_id}}",
           "protocol": "http",
           "host": ["localhost"],
-          "port": "8080",
+          "port": "8081",
           "path": ["api", "v1", "users", "{{user_id}}"]
         }
       }
@@ -187,13 +187,13 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"name\": \"UpdatedName\"\n}"
+          "raw": "{\n  \"name\": \"Мария-Обновленная\"\n}"
         },
         "url": {
-          "raw": "http://localhost:8080/api/v1/users/{{user_id}}",
+          "raw": "http://localhost:8081/api/v1/users/{{user_id}}",
           "protocol": "http",
           "host": ["localhost"],
-          "port": "8080",
+          "port": "8081",
           "path": ["api", "v1", "users", "{{user_id}}"]
         }
       }
@@ -210,10 +210,10 @@
           }
         ],
         "url": {
-          "raw": "http://localhost:8080/api/v1/users/{{user_id}}",
+          "raw": "http://localhost:8081/api/v1/users/{{user_id}}",
           "protocol": "http",
           "host": ["localhost"],
-          "port": "8080",
+          "port": "8081",
           "path": ["api", "v1", "users", "{{user_id}}"]
         }
       }

@@ -25,9 +25,10 @@ public class UserResponse {
     private String createdAt;
     private String bio;
     private String avatarUrl;
+    private Integer mmr = 100;
 
     public static UserResponse from(User user) {
-        return new UserResponse(
+        UserResponse response = new UserResponse(
                 user.getId(),
                 user.getName(),
                 user.getSurname(),
@@ -43,7 +44,9 @@ public class UserResponse {
                 user.getHeight(),
                 user.getCreatedAt() != null ? user.getCreatedAt().toString() : null,
                 user.getBio(),
-                user.getAvatarUrl()
+                user.getAvatarUrl(),
+                user.getMmr() != null ? user.getMmr() : 100
         );
+        return response;
     }
 } 
