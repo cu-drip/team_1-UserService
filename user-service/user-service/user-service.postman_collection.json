@@ -1,0 +1,222 @@
+{
+  "info": {
+    "name": "User Service API v1 (Clean)",
+    "_postman_id": "user-service-api-v1-clean",
+    "description": "Коллекция для проверки всех эндпоинтов User Service (валидные данные)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Регистрация пользователя: Иван Иванов",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"ivan.ivanov2024@example.com\",\n  \"password\": \"Ivan2024!pass\",\n  \"name\": \"Иван\",\n  \"surname\": \"Иванов\",\n  \"phoneNumber\": \"79001234567\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8081/api/v1/auth/register",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "v1", "auth", "register"]
+        }
+      }
+    },
+    {
+      "name": "Логин (Иван Иванов)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"ivan.ivanov2024@example.com\",\n  \"password\": \"Ivan2024!pass\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8081/api/v1/auth/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "v1", "auth", "login"]
+        }
+      }
+    },
+    {
+      "name": "Получить свой профиль",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/v1/auth/me",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "v1", "auth", "me"]
+        }
+      }
+    },
+    {
+      "name": "Обновить свой профиль (имя)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Иван-Обновленный\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8081/api/v1/auth/me",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "v1", "auth", "me"]
+        }
+      }
+    },
+    {
+      "name": "Сменить пароль",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"oldPassword\": \"Ivan2024!pass\",\n  \"newPassword\": \"Ivan2024!newpass\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8081/api/v1/auth/change-password",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "v1", "auth", "change-password"]
+        }
+      }
+    },
+    {
+      "name": "Получить всех пользователей (для админа)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/v1/users",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "v1", "users"]
+        }
+      }
+    },
+    {
+      "name": "Создать пользователя (для админа)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Мария\",\n  \"surname\": \"Смирнова\",\n  \"email\": \"maria.smirnova2024@example.com\",\n  \"hashedPassword\": \"Maria2024#pass\",\n  \"isAdmin\": false\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8081/api/v1/users",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "v1", "users"]
+        }
+      }
+    },
+    {
+      "name": "Получить пользователя по id",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/v1/users/{{user_id}}",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "v1", "users", "{{user_id}}"]
+        }
+      }
+    },
+    {
+      "name": "Обновить пользователя по id",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Мария-Обновленная\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8081/api/v1/users/{{user_id}}",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "v1", "users", "{{user_id}}"]
+        }
+      }
+    },
+    {
+      "name": "Удалить пользователя по id",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/v1/users/{{user_id}}",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "v1", "users", "{{user_id}}"]
+        }
+      }
+    }
+  ]
+} 

@@ -1,0 +1,1 @@
+ALTER TABLE users ADD COLUMN mmr integer DEFAULT 100; 
