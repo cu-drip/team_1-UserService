@@ -1,5 +1,6 @@
 package com.example.userservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -22,6 +23,7 @@ public class User {
     private String patronymic;
     @Column(nullable = false)
     private String email;
+    @JsonIgnore // Убираем из JSON ответов API
     @Column(name = "hashedPassword")
     private String hashedPassword;
     private boolean isAdmin;
@@ -44,5 +46,5 @@ public class User {
     @Column(nullable = true)
     private String phoneNumber;
     @Column(nullable = true)
-    private Integer mmr;
+    private Integer mmr = 100; // Дефолтное значение 100
 } 

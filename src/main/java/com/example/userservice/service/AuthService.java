@@ -39,11 +39,12 @@ public class AuthService {
                 .patronymic(request.getPatronymic())
                 .phoneNumber(request.getPhoneNumber())
                 .isAdmin(true)
+                .mmr(100) // Дефолтное значение mmr
                 .createdAt(LocalDateTime.now())
                 .build();
         userRepository.save(user);
-        // Формируем ответ
-        return UserResponse.from(user);
+        // Формируем ответ (без hashedPassword)
+        return UserResponse.fromUser(user);
     }
 
     public String login(String email, String password) {
@@ -55,9 +56,9 @@ public class AuthService {
         // Генерируем JWT-токен с ролями
         java.util.List<String> roles = new java.util.ArrayList<>();
         if (user.isAdmin()) {
-            roles.add("ROLE_ADMIN");
+            roles.add("ADMIN");
         } else {
-            roles.add("ROLE_USER");
+            roles.add("USER");
         }
         return jwtTokenProvider.generateToken(user.getId(), user.getEmail(), roles);
     }

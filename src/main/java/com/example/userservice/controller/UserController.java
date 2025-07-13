@@ -37,18 +37,20 @@ public class UserController {
 
     @GetMapping(path = {"", "/"})
     @Operation(summary = "Получить всех пользователей", description = "Возвращает список всех пользователей.")
-    @ApiResponse(responseCode = "200", description = "Список пользователей", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class)))
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    @ApiResponse(responseCode = "200", description = "Список пользователей", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class)))
+    public List<UserResponse> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(UserResponse::fromUser)
+                .toList();
     }
 
     @PostMapping(path = {"", "/"})
     @Operation(summary = "Создать пользователя", description = "Создаёт нового пользователя.")
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Пользователь создан", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+        @ApiResponse(responseCode = "201", description = "Пользователь создан", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))),
         @ApiResponse(responseCode = "400", description = "Некорректные данные", content = @Content)
     })
-    public ResponseEntity<User> createUser(@Valid @RequestBody UserCreateRequest request) {
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserCreateRequest request) {
         if (userRepository.findAll().stream().anyMatch(u -> u.getEmail().equals(request.getEmail()))) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Пользователь с таким email уже существует");
         }
@@ -67,10 +69,11 @@ public class UserController {
                 .height(request.getHeight())
                 .bio(request.getBio())
                 .avatarUrl(request.getAvatarUrl())
+                .mmr(request.getMmr() != null ? request.getMmr() : 100) // Дефолтное значение 100
                 .createdAt(java.time.LocalDateTime.now())
                 .build();
         userRepository.save(user);
-        return ResponseEntity.status(201).body(user);
+        return ResponseEntity.status(201).body(UserResponse.fromUser(user));
     }
 
     @GetMapping("/{id}")
@@ -81,17 +84,17 @@ public class UserController {
     })
     public ResponseEntity<UserResponse> getUserById(@PathVariable java.util.UUID id) {
         return userRepository.findById(id)
-                .map(user -> ResponseEntity.ok(com.example.userservice.dto.UserResponse.from(user)))
+                .map(user -> ResponseEntity.ok(UserResponse.fromUser(user)))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
     }
 
     @PatchMapping("/{id}")
     @Operation(summary = "Обновить пользователя", description = "Обновляет данные пользователя по его идентификатору.")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Пользователь обновлён", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+        @ApiResponse(responseCode = "200", description = "Пользователь обновлён", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))),
         @ApiResponse(responseCode = "404", description = "Пользователь не найден", content = @Content)
     })
-    public ResponseEntity<User> updateUser(@PathVariable java.util.UUID id, @Valid @RequestBody UserUpdateRequest request) {
+    public ResponseEntity<UserResponse> updateUser(@PathVariable java.util.UUID id, @Valid @RequestBody UserUpdateRequest request) {
         return userRepository.findById(id).map(user -> {
             if (request.getName() != null) user.setName(request.getName());
             if (request.getSurname() != null) user.setSurname(request.getSurname());
@@ -106,8 +109,9 @@ public class UserController {
             if (request.getHeight() != null) user.setHeight(request.getHeight());
             if (request.getBio() != null) user.setBio(request.getBio());
             if (request.getAvatarUrl() != null) user.setAvatarUrl(request.getAvatarUrl());
+            if (request.getMmr() != null) user.setMmr(request.getMmr()); // Добавлена поддержка обновления mmr
             userRepository.save(user);
-            return ResponseEntity.ok(user);
+            return ResponseEntity.ok(UserResponse.fromUser(user));
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
     }
 
