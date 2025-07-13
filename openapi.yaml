@@ -351,11 +351,10 @@ components:
           type: boolean
         dateOfBirth:
           type: string
-          format: date
         age:
           type: integer
         sex:
-          $ref: '#/components/schemas/Sex'
+          type: string
         weight:
           type: number
           format: float
@@ -364,11 +363,14 @@ components:
           format: float
         createdAt:
           type: string
-          format: date-time
         bio:
           type: string
         avatarUrl:
           type: string
+        mmr:
+          type: integer
+          description: Matchmaking Rating
+          default: 100
     UserCreateRequest:
       type: object
       properties:
@@ -480,6 +482,10 @@ components:
           type: string
         avatarUrl:
           type: string
+        mmr:
+          type: integer
+          description: Matchmaking Rating
+          default: 100
     LoginRequest:
       type: object
       properties:
