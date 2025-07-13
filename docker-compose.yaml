@@ -1,6 +1,6 @@
 secrets:
   jwt_secret:
-    file: ./secrets/jwt_secret.key
+    file: ../secrets/jwt_secret.key
 
 services:
   userdb:
@@ -19,10 +19,12 @@ services:
       test: ["CMD-SHELL", "pg_isready -U myuser -d users"]
       interval: 10s
       retries: 5
+    networks:
+      - microservices-net
 
-  user-service:
+  userservice:
     build: .
-    container_name: user-service
+    container_name: userservice
     restart: on-failure
     depends_on:
       userdb:
@@ -36,6 +38,12 @@ services:
       - "8081:8080"
     secrets:
       - jwt_secret
+    networks:
+      - microservices-net
 
 volumes:
   user_data:
+
+networks:
+  microservices-net:
+    external: true
