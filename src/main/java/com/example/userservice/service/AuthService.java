@@ -56,9 +56,9 @@ public class AuthService {
         // Генерируем JWT-токен с ролями
         java.util.List<String> roles = new java.util.ArrayList<>();
         if (user.isAdmin()) {
-            roles.add("ADMIN");
+            roles.add("ROLE_ADMIN");
         } else {
-            roles.add("USER");
+            roles.add("ROLE_USER");
         }
         return jwtTokenProvider.generateToken(user.getId(), user.getEmail(), roles);
     }
