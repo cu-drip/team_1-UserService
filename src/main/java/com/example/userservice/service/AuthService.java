@@ -60,6 +60,6 @@ public class AuthService {
         } else {
             roles.add("ROLE_USER");
         }
-        return jwtTokenProvider.generateToken(user.getId(), user.getEmail(), roles);
+        return jwtTokenProvider.generateToken(user.getId(), roles);
     }
 } 
