@@ -1,3 +1,7 @@
+secrets:
+  jwt_secret:
+    file: ../secrets/jwt_secret.key
+
 services:
   userdb:
     image: postgres:16-alpine
@@ -15,10 +19,12 @@ services:
       test: ["CMD-SHELL", "pg_isready -U myuser -d users"]
       interval: 10s
       retries: 5
+    networks:
+      - microservices-net
 
-  user-service:
+  userservice:
     build: .
-    container_name: user-service
+    container_name: userservice
     restart: on-failure
     depends_on:
       userdb:
@@ -27,11 +33,17 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://userdb:5432/users
       SPRING_DATASOURCE_USERNAME: myuser
       SPRING_DATASOURCE_PASSWORD: mypassword
-      JWT_SECRET_PATH: /app/jwt-secret.txt
+      JWT_SECRET_FILE: /run/secrets/jwt_secret
     ports:
       - "8081:8080"
-    volumes:
-      - ./secrets:/app/secrets
+    secrets:
+      - jwt_secret
+    networks:
+      - microservices-net
 
 volumes:
   user_data:
+
+networks:
+  microservices-net:
+    external: true
