@@ -17,12 +17,11 @@ public class JwtTokenProvider {
         this.jwtKey = jwtKey;
     }
 
-    public String generateToken(UUID userId, String email, List<String> roles) {
+    public String generateToken(UUID userId, List<String> roles) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
         return Jwts.builder()
                 .setSubject(userId.toString())
-                .claim("email", email)
                 .claim("roles", roles)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
