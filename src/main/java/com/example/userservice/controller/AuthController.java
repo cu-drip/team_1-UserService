@@ -63,7 +63,7 @@ public class AuthController {
         }
         java.util.UUID userId = jwtTokenProvider.getUserIdFromToken(token);
         return userRepository.findById(userId)
-                .map(user -> ResponseEntity.ok(UserResponse.from(user)))
+                .map(user -> ResponseEntity.ok(UserResponse.fromUser(user)))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found or unauthorized"));
     }
 
@@ -90,8 +90,9 @@ public class AuthController {
             if (request.getHeight() != null) user.setHeight(request.getHeight());
             if (request.getBio() != null) user.setBio(request.getBio());
             if (request.getAvatarUrl() != null) user.setAvatarUrl(request.getAvatarUrl());
+            if (request.getMmr() != null) user.setMmr(request.getMmr()); // Добавлена поддержка обновления mmr
             userRepository.save(user);
-            return ResponseEntity.ok(UserResponse.from(user));
+            return ResponseEntity.ok(UserResponse.fromUser(user));
         }).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found or unauthorized"));
     }
 

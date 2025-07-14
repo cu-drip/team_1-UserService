@@ -1,52 +1,57 @@
 package com.example.userservice.dto;
 
-import com.example.userservice.model.User;
+import com.example.userservice.model.Sex;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
-@AllArgsConstructor
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserResponse {
     private UUID id;
     private String name;
     private String surname;
     private String patronymic;
-    private String phoneNumber;
     private String email;
-    private String hashedPassword;
+    // Убрано поле hashedPassword из ответов API
+    // private String hashedPassword;
     private boolean isAdmin;
-    private String dateOfBirth;
+    private LocalDate dateOfBirth;
     private Integer age;
-    private String sex;
+    private Sex sex;
     private Float weight;
     private Float height;
-    private String createdAt;
+    private LocalDateTime createdAt;
     private String bio;
     private String avatarUrl;
-    private Integer mmr = 100;
+    private String phoneNumber;
+    private Integer mmr;
 
-    public static UserResponse from(User user) {
-        UserResponse response = new UserResponse(
+    public static UserResponse fromUser(com.example.userservice.model.User user) {
+        return new UserResponse(
                 user.getId(),
                 user.getName(),
                 user.getSurname(),
                 user.getPatronymic(),
-                user.getPhoneNumber(),
                 user.getEmail(),
-                user.getHashedPassword(),
+                // Убрано поле hashedPassword из ответов API
+                // user.getHashedPassword(),
                 user.isAdmin(),
-                user.getDateOfBirth() != null ? user.getDateOfBirth().toString() : null,
+                user.getDateOfBirth(),
                 user.getAge(),
-                user.getSex()  != null ? user.getSex().toString() : null,
+                user.getSex(),
                 user.getWeight(),
                 user.getHeight(),
-                user.getCreatedAt() != null ? user.getCreatedAt().toString() : null,
+                user.getCreatedAt(),
                 user.getBio(),
                 user.getAvatarUrl(),
-                user.getMmr() != null ? user.getMmr() : 100
+                user.getPhoneNumber(),
+                user.getMmr()
         );
-        return response;
     }
 } 

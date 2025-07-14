@@ -16,4 +16,5 @@ public class UserUpdateRequest {
     private Float height;
     private String bio;
     private String avatarUrl;
+    private Integer mmr; // Опциональное поле mmr
 } 
