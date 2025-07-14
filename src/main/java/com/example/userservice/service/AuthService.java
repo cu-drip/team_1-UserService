@@ -38,7 +38,7 @@ public class AuthService {
                 .surname(request.getSurname())
                 .patronymic(request.getPatronymic())
                 .phoneNumber(request.getPhoneNumber())
-                .isAdmin(false)
+                .isAdmin(true)
                 .mmr(100) // Дефолтное значение mmr
                 .createdAt(LocalDateTime.now())
                 .build();
